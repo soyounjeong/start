@@ -1,0 +1,41 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper
+        PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+        "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+<mapper namespace="Board">
+    <insert id="write_ok" parameterType="map">
+        insert into tb_board(b_userid, b_title, b_content, b_file) values (#{b_userid}, #{b_title}, #{b_content}, #{b_file})
+    </insert>
+
+    <update id="update_like_ok" parameterType="map">
+        update tb_board set b_like = b_like + 1 where b_idx=#{b_idx}
+    </update>
+
+    <select id="like_ok" parameterType="map" resultType="int">
+        select b_like from tb_board where b_idx=#{b_idx}
+    </select>
+
+    <select id="B_edit" parameterType="map" resultType="map">
+        select b_title, b_content, b_file from tb_board where b_idx=#{b_idx}
+    </select>
+
+    <update id="B_edit_ok1" parameterType="map">
+        update tb_board set b_title=#{b_title}, b_content=#{b_content} , b_file=#{b_file} where b_idx=#{b_idx}
+    </update>
+
+    <update id="B_edit_ok2" parameterType="map">
+        update tb_board set b_title=#{b_title}, b_content=#{b_content} where b_idx=#{b_idx}
+    </update>
+
+    <update id="update_view" parameterType="map">
+        update tb_board set b_hit = b_hit + 1 where b_idx=#{b_idx}
+    </update>
+
+    <select id="select_view" parameterType="map" resultType="map">
+        select b_idx, b_userid, b_title, b_content, b_regdate, b_like, b_hit, b_file from tb_board where b_idx=#{b_idx}
+    </select>
+
+    <delete id="del" parameterType="map">
+        delete from tb_board where b_idx=#{b_idx}
+    </delete>
+</mapper>
