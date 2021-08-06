@@ -22,8 +22,8 @@
 <%
     // get방식으로 ?를 받아올때
     reply.setR_idx(Integer.parseInt(String.valueOf(request.getParameter("b_idx")))); // form에서 받아오는 역할
-    reply.setUserid((String)session.getAttribute("userid")); // member에서 가져온 userid
-    reply.setContent(String.valueOf(request.getParameter("re_content")));
+    reply.setUserid(String.valueOf(session.getAttribute("re_userid")));
+    reply.setContent(String.valueOf(session.getAttribute("re_content")));
     if(dao2.reply_ok(reply) == 1){
 %>
     <script>

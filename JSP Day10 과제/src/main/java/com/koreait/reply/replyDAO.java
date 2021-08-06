@@ -1,10 +1,12 @@
 package com.koreait.reply;
 
+import com.koreait.board.BoardDTO;
 import com.koreait.db.SqlMapConfig;
 import org.apache.ibatis.session.SqlSession;
 import org.apache.ibatis.session.SqlSessionFactory;
 
 import java.util.HashMap;
+import java.util.List;
 
 public class replyDAO {
     SqlSessionFactory ssf = SqlMapConfig.getSqlMapInstance();
@@ -22,5 +24,10 @@ public class replyDAO {
         dataMap.put("re_content", reply.getContent());
         dataMap.put("re_boardidx", String.valueOf(reply.getR_idx()));
         return sqlsession.insert("Reply.reply_ok", dataMap);
+    }
+
+    //
+    public List<replyDTO> reply_aa(int idx){
+        return sqlsession.selectList("Reply.reply_aa", idx);
     }
 }

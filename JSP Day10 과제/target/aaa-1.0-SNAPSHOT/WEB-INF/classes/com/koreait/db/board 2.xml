@@ -38,18 +38,4 @@
     <delete id="del" parameterType="map">
         delete from tb_board where b_idx=#{b_idx}
     </delete>
-
-    <select id="list" parameterType="map" resultType="com.koreait.board.BoardDTO">
-        select b_idx as idx, b_userid as userid, b_title as title, b_regdate as regdate, b_hit as hit, b_like, b_file as file
-        from tb_board order by b_idx desc limit ${start}, ${pagePerCount}
-    </select>
-    <!--#{}으로 하면 String으로 받음-->
-
-    <select id="replycnt" parameterType="map" resultType="map">
-        select count(re_idx) as replycnt from tb_reply where re_boardidx=#{b_idx}
-    </select>
-
-    <select id="totalCount" parameterType="int" resultType="int">
-        select count(b_idx) as total from tb_board
-    </select>
 </mapper>

@@ -6,7 +6,7 @@ public class BoardDTO {
 	private String title;
 	private String content;
 	private int hit;
-	private int like;
+	private int b_like;
 	private String regdate;
 	private String file;
 	private String name;
@@ -41,12 +41,15 @@ public class BoardDTO {
 	public void setHit(int hit) {
 		this.hit = hit;
 	}
+
 	public int getLike() {
-		return like;
+		return b_like;
 	}
+
 	public void setLike(int like) {
-		this.like = like;
+		this.b_like = like;
 	}
+
 	public String getRegdate() {
 		return regdate;
 	}
@@ -76,7 +79,7 @@ public class BoardDTO {
 				", title='" + title + '\'' +
 				", content='" + content + '\'' +
 				", hit=" + hit +
-				", like=" + like +
+				", b_like=" + b_like +
 				", regdate='" + regdate + '\'' +
 				", file='" + file + '\'' +
 				", name='" + name + '\'' +

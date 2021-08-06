@@ -1,19 +1,16 @@
 <%@ page language="java" contentType="text/html; charset=UTF-8"
          pageEncoding="UTF-8"%>
-<%@ page import="java.sql.*" %>
-<%@ page import="com.koreait.db.Dbconn"%>
 <%@ page import="java.util.Date" %>
 <%@ page import="java.text.SimpleDateFormat" %>
-
+<%@ page import="com.koreait.board.BoardDTO" %>
+<%@ page import="java.util.List" %>
+<jsp:useBean id="board" class="com.koreait.board.BoardDTO"/>
+<jsp:useBean id="dao" class="com.koreait.board.BoardDAO"/>
 <%
-    Connection conn = null;
-    PreparedStatement pstmt = null;
-    ResultSet rs = null;
-    ResultSet rs_reply = null;
-    String sql = "";
     int totalCount = 0;
     int pagePerCount = 10;	// 페이지당 글개수
     int start = 0;	// 시작 글번호
+    int replycnt_str = 0;
 
     Date from = new Date();
     SimpleDateFormat fm = new SimpleDateFormat("yyyy-MM-dd");
@@ -32,29 +29,8 @@
     }
 
 
-    try{
-        conn = Dbconn.getConnection();
-        sql = "select count(b_idx) as total from tb_board";
-        pstmt = conn.prepareStatement(sql);
-        rs = pstmt.executeQuery();
-        if(rs.next()){
-            totalCount = rs.getInt("total");
-        }
-
-        sql = "select b_idx, b_userid, b_title, b_regdate, b_hit, b_like, b_file from tb_board order by b_idx desc limit ?, ?";
-		/*
-			select * from tb_board order by b_idx desc limit 0, 10; -- 0부터 10개
-			select * from tb_board order by b_idx desc limit 10, 10;
-			select * from tb_board order by b_idx desc limit 20, 10;
-		*/
-        pstmt = conn.prepareStatement(sql);
-        pstmt.setInt(1, start);
-        pstmt.setInt(2, pagePerCount);
-        rs = pstmt.executeQuery();
-    }catch(Exception e){
-        e.printStackTrace();
-    }
 %>
+
 <!DOCTYPE html>
 <html>
 <head>
@@ -63,7 +39,7 @@
 </head>
 <body>
 <h2>리스트</h2>
-<p>게시글 : <%=totalCount%>개</p>
+<p>게시글 : <%=dao.totalCount(board)%>개</p>
 
 <table border="1" width="800">
     <tr>
@@ -75,58 +51,38 @@
         <th width="75">좋아요</th>
     </tr>
     <%
-        while(rs.next()){
-            String b_idx = rs.getString("b_idx");
-            String b_userid = rs.getString("b_userid");
-            String b_title = rs.getString("b_title");
-            String b_regdate = rs.getString("b_regdate").substring(0, 10);
-            String b_hit = rs.getString("b_hit");
-            String b_like = rs.getString("b_like");
-            String b_file = rs.getString("b_file");
-
+        List<BoardDTO> boardDTOS = dao.list(start, pagePerCount);
+        for(BoardDTO list : boardDTOS){
+            int idx = list.getIdx();
             String newDateStr = "";
-            if(to.equals(b_regdate)){
+            if(to.equals(list.getRegdate().substring(0,10))){ // 날짜가 초까지나오는데 20201011
                 newDateStr = "<img src='./new.png' alt='새글'>";
             }
 
             String fileStr = "";
-            if(b_file != null && !b_file.equals("")){
+            if(list.getFile() != null && !list.getFile().equals("")){
                 fileStr = "<img src='./file.png' alt='파일'>";
-            }
-
-            sql = "select count(re_idx) as replycnt from tb_reply where re_boardidx=?";
-            pstmt = conn.prepareStatement(sql);
-            pstmt.setString(1, b_idx);
-            rs_reply = pstmt.executeQuery();
-
-            int replycnt = 0;
-            String replycnt_str = "";
-            if(rs_reply.next()){
-                replycnt = rs_reply.getInt("replycnt");
-                if(replycnt > 0){
-                    replycnt_str = "["+replycnt+"]";
-                }
             }
 
     %>
     <tr>
-        <td><%=b_idx%></td>
-        <td><a href="./view.jsp?b_idx=<%=b_idx%>"><%=b_title%></a> <%=replycnt_str%> <%=fileStr%> <%=newDateStr%></td>
-        <td><%=b_userid%></td>
-        <td><%=b_hit%></td>
-        <td><%=b_regdate%></td>
-        <td><%=b_like%></td>
+        <td><%=list.getIdx()%></td>
+        <td><a href="./view.jsp?b_idx=<%=list.getIdx()%>"><%=list.getTitle()%></a> <%=dao.replycnt(idx)%> <%=fileStr%> <%=newDateStr%></td>
+        <td><%=list.getUserid()%></td>
+        <td><%=list.getHit()%></td>
+        <td><%=list.getRegdate()%></td>
+        <td><%=list.getLike()%></td>
     </tr>
     <%
         }
 
-
         int pageNums = 0;
-        if(totalCount % pagePerCount == 0){
-            pageNums = (totalCount / pagePerCount);	// 20 / 10
+        if(dao.totalCount(board) % pagePerCount == 0){
+            pageNums = (dao.totalCount(board) / pagePerCount);	// 20 / 10
         }else{
-            pageNums = (totalCount / pagePerCount) + 1;
+            pageNums = (dao.totalCount(board) / pagePerCount) + 1;
         }
+
     %>
     <tr>
         <td colspan="6" align="center">
@@ -140,6 +96,8 @@
 </table>
 
 
-<p><input type="button" value="글쓰기" onclick="location.href='write.jsp'"> <input type="button" value="메인" onclick="location.href='../login.jsp'"></p>
+<p><input type="button" value="글쓰기" onclick="location.href='write.jsp'">
+    <input type="button" value="메인" onclick="location.href='../login.jsp'">
+</p>
 </body>
 </html>

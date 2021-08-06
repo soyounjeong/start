@@ -45,7 +45,8 @@ public class BoardDAO {
 
 		dataMap = sqlsession.selectOne("Board.like_ok", dataMap); // BoardDao select 구문
 		if(dataMap != null){
-			board.setLike(Integer.parseInt(dataMap.get("b_like")));
+			board.setLike((Integer.parseInt(String.valueOf(dataMap.get("b_like"))))); // String.valueof를 해줘야 값이 들어감!!!!
+			// String.valueof : string으로바꿀때 값이 비어있는 null로 출력
 			return board;
 		}
 		return null;
@@ -87,20 +88,18 @@ public class BoardDAO {
 	// view.jsp
 	public BoardDTO view(BoardDTO board){
 		HashMap<String, String> dataMap = new HashMap<>();
+		dataMap.put("b_idx", String.valueOf(board.getIdx()));
+		sqlsession.update("Board.update_view", dataMap);
+		dataMap = sqlsession.selectOne("Board.select_view", dataMap);
 		if(dataMap != null){
-			dataMap.put("b_hit", String.valueOf(board.getHit()));
-			dataMap.put("b_idx", String.valueOf(board.getIdx()));
-			sqlsession.update("Board.update_view", dataMap); //
 
-			dataMap = sqlsession.selectOne("Board.select_view", dataMap);
-			dataMap.put("b_idx", String.valueOf(board.getIdx()));
-			dataMap.put("b_userid", board.getUserid());
-			dataMap.put("b_title", board.getTitle());
-			dataMap.put("b_content", board.getContent());
-			dataMap.put("b_regdate", board.getRegdate());
-			dataMap.put("b_like", String.valueOf(board.getLike()));
-			dataMap.put("b_hit", String.valueOf(board.getHit()));
-			dataMap.put("b_file",board.getFile());
+			board.setUserid(dataMap.get("b_userid"));
+			board.setTitle(dataMap.get("b_title"));
+			board.setContent(dataMap.get("b_content"));
+			board.setRegdate(String.valueOf(dataMap.get("b_regdate")));
+			board.setLike((Integer.parseInt(String.valueOf(dataMap.get("b_like")))));
+			board.setHit(Integer.parseInt(String.valueOf(dataMap.get("b_hit"))));
+			board.setFile(dataMap.get("b_file"));
 			return board;
 		}
 		return null;
@@ -112,4 +111,38 @@ public class BoardDAO {
 		dataMap.put("b_idx", String.valueOf(board.getIdx()));
 		return sqlsession.delete("Board.del", dataMap);
 	}
+
+
+	// list.jsp
+	public List<BoardDTO> list(int start, int pagePerCount){
+		HashMap<String, String> dataMap = new HashMap<>();
+		dataMap.put("start", String.valueOf(start));
+		dataMap.put("pagePerCount", String.valueOf(pagePerCount));
+		return sqlsession.selectList("Board.list", dataMap);
+	}
+
+	// list.jsp : 댓글 갯수
+	public String replycnt(int idx){
+		String replycnt_str = "";
+		int replycnt = 0;
+		HashMap<String,String> dataMap = new HashMap<>();
+		dataMap.put("b_idx", String.valueOf(idx));
+		dataMap = sqlsession.selectOne("Board.replycnt", dataMap);
+
+		if(dataMap != null){
+			replycnt = Integer.parseInt(String.valueOf(dataMap.get("replycnt")));
+			if(replycnt > 0){
+				replycnt_str = "[" + replycnt + "]";
+			}
+		}
+		return replycnt_str;
+	}
+
+	// list.jsp : 글 갯수
+	public int totalCount(BoardDTO board){
+		HashMap<String, String> dataMap = new HashMap<>();
+		dataMap.put("b_idx", String.valueOf(board.getIdx()));
+		return sqlsession.selectOne("Board.totalCount", dataMap);
+	}
 }
+

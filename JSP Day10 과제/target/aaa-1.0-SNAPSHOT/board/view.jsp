@@ -1,4 +1,5 @@
-<%--
+<%@ page import="com.koreait.reply.replyDTO" %>
+<%@ page import="java.util.List" %><%--
   Created by IntelliJ IDEA.
   User: soyounjeong
   Date: 2021/07/23
@@ -49,7 +50,7 @@
                     <td>조회수</td><td><%=board.getHit()%></td>
                 </tr>
                 <tr>
-                    <td>좋아요</td><td><%=board.getLike()%></td>
+                    <td>좋아요</td><td><span id="like"> <%=board.getLike()%></span></td>
                 </tr>
                 <tr>
                     <td>내용</td><td><%=board.getContent()%></td>
@@ -83,9 +84,17 @@
             <hr/>
             <jsp:useBean id="reply" class="com.koreait.reply.replyDTO"/>
             <jsp:useBean id="dao2" class="com.koreait.reply.replyDAO"/>
-            <p><%=reply.getUserid()%> : <%=reply.getContent()%> (<%=reply.getRegdate()%>)</p>
+            <%
+                int idx = Integer.parseInt(String.valueOf(board.getIdx()));
+                List<replyDTO> list = dao2.reply_aa(idx);
+
+                for(replyDTO reply_ok : list){
+            %>
+
+            <p><%=reply_ok.getUserid()%> : <%=reply_ok.getContent()%> (<%=reply_ok.getRegdate()%>)</p>
     </body>
 </html>
 <%
+        }
     }
 %>

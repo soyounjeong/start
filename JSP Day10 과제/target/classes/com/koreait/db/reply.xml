@@ -4,6 +4,11 @@
         "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
 <mapper namespace="Reply">
     <insert id="reply_ok" parameterType="map">
-        insert into tb_reply(re_userid, re_content, re_boardidx) values (#{re_userid}, #{re_content}, #{reboardidx})
+        insert into tb_reply(re_userid, re_content, re_boardidx) values (#{re_userid}, #{re_content}, #{re_boardidx})
     </insert>
+
+    <select id="reply_aa" parameterType="int" resultType="com.koreait.reply.replyDTO">
+        select re_idx as r_idx, re_userid as userid, re_content as content, re_regdate  as regdate
+        from tb_reply where re_boardidx=#{idx} order by re_idx desc
+    </select>
 </mapper>
