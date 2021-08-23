@@ -25,8 +25,7 @@ public class ItemApiController implements CrudInterface<ItemApiRequest, ItemApiR
 //            "name" : "삼성 노트북9",
 //            "title" : "삼성노트북 15인치",
 //             "content" : "무겁고 짱 단단해요",
-//              "price" : "1500000",
-//                "regdate" : "2021-08-23"
+//              "price" : "1500000"
 //    }
 //    }
     @Override
