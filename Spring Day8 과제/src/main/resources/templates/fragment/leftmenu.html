@@ -1,0 +1,23 @@
+<html lang="ko"
+      xmlns="http://www.w3.org/1999/xhtml"
+      xmlns:th="http://www.thymeleaf.org/">
+
+<!-- Menu -->
+<div class="menu" th:fragment="leftmenu(code, menuList)">
+    <ul class="list">
+        <li class="header">MAIN NAVIGATION</li>
+
+        <!--하나의 블록을 만들어서 반복문 실행 entry라는 변수를 만들어서 menuList 안에서 돌수 있도록 -->
+        <th:block th:each="entry : ${menuList}">
+            <li class="active">
+                <!--url 경로가 들어감-->
+                <!--AdminMenuService 안에 있는 url / title를 가져와서 호출 -->
+                <a th:href="${entry.url}" >
+                    <i class="material-icons" th:text="${entry.img}"></i>
+                    <span th:text="${entry.title}"></span>
+                </a>
+            </li>
+        </th:block>
+    </ul>
+</div>
+<!-- #Menu -->
